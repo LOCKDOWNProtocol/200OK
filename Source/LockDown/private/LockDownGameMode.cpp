@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "LockDownGameMode.h"
-#include "LockDownCharacter.h"
+#include "SJ/LockDownCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 ALockDownGameMode::ALockDownGameMode()
