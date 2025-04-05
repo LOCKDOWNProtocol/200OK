@@ -151,23 +151,17 @@ void ASJ_Character::InputPrimaryAction()
 	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red, false, 1.0f, 0, 1.0f);
 
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECC_Visibility, Params);
-
-	if (bHit)
-	{
+	if (bHit) {
 		AActor* HitActor = HitResult.GetActor();
-		if (ASJ_TestItem* Item = Cast<ASJ_TestItem>(HitActor)) {
-			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Green, TEXT("아이템 입니다"));
-			// 아이템 줍기 처리
+		if (ASJ_TestItem* TestItem = Cast<ASJ_TestItem>(HitActor)) {
+			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("Item Casting Success"));
 		}
 		else if (ASJ_TestButton* Button = Cast<ASJ_TestButton>(HitActor)) {
-			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Blue, TEXT("버튼 입니다"));
-			// 버튼 누르기 처리
+			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("Button Casting Success"));
 		}
 		else {
-			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Silver, TEXT("인터랙션 불가 액터"));
+			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("Cannot Interaction Actor"));
 		}
-	} else {
-		GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("Hit 없음"));
 	}
 }
 
