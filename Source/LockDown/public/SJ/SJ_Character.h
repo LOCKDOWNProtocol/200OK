@@ -22,6 +22,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+
 private: // SpringArm
 	UPROPERTY(VisibleAnywhere, Category="SpringArm")
 	class USpringArmComponent* SpringArm;
@@ -48,17 +49,13 @@ private: // Input
 	UPROPERTY(EditDefaultsOnly, Category=Input)
 	class UInputAction* IA_SJ_WalkHold;	
 	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* IA_SJ_WalkToggle;	
+	class UInputAction* IA_SJ_WalkToggle;		
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	class UInputAction* IA_PrimaryAction;
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	class UInputAction* IA_ThrowItem;
 
-private: // 변수
-	UPROPERTY(EditDefaultsOnly, Category=PlayerSpeed)
-	float WalkSpeed = 200.f;	
-	UPROPERTY(EditDefaultsOnly, Category=PlayerSpeed)
-	float RunSpeed = 600.f;
 
-	FVector PlayerDirection;
-	bool bCrouched;
-	
 private: // Input 관련 함수
 	void InputTurn(const struct FInputActionValue& InputValue);
 	void InputLookUp(const struct FInputActionValue& InputValue);
@@ -68,4 +65,19 @@ private: // Input 관련 함수
 	void InputWalkHold();
 	void InputUnWalkHold();
 	void InputWalkToggle();
+	void InputPrimaryAction();
+	void InputThrowItem();
+
+
+private: // movement 변수
+	UPROPERTY(EditDefaultsOnly, Category=PlayerSpeed)
+	float WalkSpeed = 200.f;	
+	UPROPERTY(EditDefaultsOnly, Category=PlayerSpeed)
+	float RunSpeed = 600.f;
+	FVector PlayerDirection;
+	bool bCrouched;
+	
+
+public: // Mouse L - PrimaryAction 관련
+
 };
