@@ -53,7 +53,11 @@ private: // Input
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	class UInputAction* IA_PrimaryAction;
 	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* IA_ThrowItem;
+	class UInputAction* IA_SecondaryAction;
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	class UInputAction* IA_ReleaseItem;
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	class UInputAction* IA_Inventory;
 
 
 private: // Input 관련 함수
@@ -66,18 +70,25 @@ private: // Input 관련 함수
 	void InputUnWalkHold();
 	void InputWalkToggle();
 	void InputPrimaryAction();
-	void InputThrowItem();
+	void ReleaseItem();
+	void Inventory();
+	void InputSecondaryAction();
 
 
 private: // movement 변수
 	UPROPERTY(EditDefaultsOnly, Category=PlayerSpeed)
-	float WalkSpeed = 200.f;	
+	float WalkSpeed = 500.f;	
 	UPROPERTY(EditDefaultsOnly, Category=PlayerSpeed)
-	float RunSpeed = 600.f;
+	float RunSpeed = 700.f;
 	FVector PlayerDirection;
 	bool bCrouched;
 	
 
 public: // Mouse L - PrimaryAction 관련
-
+	bool bHasItem = false;
+	UPROPERTY()
+	AActor* ownedItem = nullptr;
+	void PickupItem(AActor* HitActor);
+	void PressButton(AActor* HitActor);
+	void AttackItem();
 };

@@ -75,12 +75,17 @@ void ASJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		playerInput->BindAction(IA_SJ_Run, ETriggerEvent::Started, this, &ThisClass::InputRun);
 		playerInput->BindAction(IA_SJ_Run, ETriggerEvent::Completed, this, &ThisClass::InputRun);
 		playerInput->BindAction(IA_SJ_Jump, ETriggerEvent::Started, this, &ThisClass::InputJump);
+
 		playerInput->BindAction(IA_SJ_WalkHold, ETriggerEvent::Started, this, &ThisClass::InputWalkHold);
 		playerInput->BindAction(IA_SJ_WalkHold, ETriggerEvent::Completed, this, &ThisClass::InputUnWalkHold);
 		playerInput->BindAction(IA_SJ_WalkToggle, ETriggerEvent::Started, this, &ThisClass::InputWalkToggle);
 
 		playerInput->BindAction(IA_PrimaryAction, ETriggerEvent::Started, this, &ThisClass::InputPrimaryAction);
-		playerInput->BindAction(IA_ThrowItem, ETriggerEvent::Started, this, &ThisClass::InputThrowItem);
+		playerInput->BindAction(IA_SecondaryAction, ETriggerEvent::Started, this, &ThisClass::InputSecondaryAction);
+
+		playerInput->BindAction(IA_ReleaseItem, ETriggerEvent::Started, this, &ThisClass::ReleaseItem);
+		
+		playerInput->BindAction(IA_Inventory, ETriggerEvent::Started, this, &ThisClass::Inventory);
 
 	}
 
@@ -141,6 +146,38 @@ void ASJ_Character::InputWalkToggle()
 
 void ASJ_Character::InputPrimaryAction()
 {
+	// 장비 중이면 아이템 휘두르기
+	if (bHasItem) {
+		AttackItem();
+		return;
+	}
+
+	// 맨손 일 때 아이템인지 버튼인지 먼저 판별
+	FHitResult HitResult;
+	FVector StartPos = CameraComp->GetComponentLocation();
+	FVector EndPos = StartPos + CameraComp->GetForwardVector() * 300.f;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red, false, 1.0f, 0, 1.0f);
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECC_Visibility, Params);
+	if (!bHit)return;
+	AActor* HitActor = HitResult.GetActor();
+
+	if (Cast<ASJ_TestItem>(HitActor)) {
+		PickupItem(HitActor);
+	}
+	else if (Cast<ASJ_TestButton>(HitActor)) {
+		PressButton(HitActor);
+	}
+	else {
+		GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Cyan, TEXT("Cannot Interaction Actor"));
+	}
+
+}
+
+void ASJ_Character::PickupItem(AActor* HitActor)
+{
 	FHitResult HitResult;
 	FVector StartPos = CameraComp->GetComponentLocation();
 	FVector EndPos = StartPos + CameraComp->GetForwardVector() * 300.f;
@@ -154,20 +191,77 @@ void ASJ_Character::InputPrimaryAction()
 	if (bHit) {
 		AActor* HitActor = HitResult.GetActor();
 		if (ASJ_TestItem* TestItem = Cast<ASJ_TestItem>(HitActor)) {
-			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("Item Casting Success"));
-		}
-		else if (ASJ_TestButton* Button = Cast<ASJ_TestButton>(HitActor)) {
-			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("Button Casting Success"));
+			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Yellow, TEXT("Item Casting Success"));
 		}
 		else {
-			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("Cannot Interaction Actor"));
+			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Cyan, TEXT("Cannot Interaction Actor"));
 		}
 	}
 }
 
-void ASJ_Character::InputThrowItem()
+void ASJ_Character::PressButton(AActor* HitActor)
+{
+	FHitResult HitResult;
+	FVector StartPos = CameraComp->GetComponentLocation();
+	FVector EndPos = StartPos + CameraComp->GetForwardVector() * 300.f;
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red, false, 1.0f, 0, 1.0f);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECC_Visibility, Params);
+	if (bHit) {
+		AActor* HitActor = HitResult.GetActor();
+		if (ASJ_TestButton* Button = Cast<ASJ_TestButton>(HitActor)) {
+			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("Button Casting Success"));
+		}
+		else {
+			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Cyan, TEXT("Cannot Interaction Actor"));
+		}
+	}
+}
+
+void ASJ_Character::AttackItem()
+{
+	// 근접공격 : 장비중일 때 아이템으로 휘두르기
+	if (!bHasItem || !ownedItem) return;
+	GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Green, TEXT("Item Attack!"));
+}
+
+void ASJ_Character::ReleaseItem()
 {
 	// 장비중일 때 아이템 버리기
+	if (!bHasItem || !ownedItem) return;
 
+	// 라인트레이스로 mesh에 붙인 아이템을 버리기
+	// 소유off + Detach + 물리on + 콜리전처리
+	if (!bHasItem || !ownedItem) return;
+
+	UPrimitiveComponent* PrimComp = Cast<UPrimitiveComponent>(ownedItem->GetRootComponent());
+	if (PrimComp)
+	{
+		ownedItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		PrimComp->SetSimulatePhysics(true);
+		PrimComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		PrimComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+
+		FVector ForwardImpulse = CameraComp->GetForwardVector() * 300.f;
+		PrimComp->AddImpulse(ForwardImpulse);
+	}
+
+	bHasItem = false;
+	ownedItem = nullptr;
+
+	GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Blue, TEXT("Release Item!"));
+}
+
+void ASJ_Character::Inventory()
+{
+
+}
+
+void ASJ_Character::InputSecondaryAction()
+{
 
 }
