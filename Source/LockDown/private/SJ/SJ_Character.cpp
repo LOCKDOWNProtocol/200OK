@@ -1,4 +1,4 @@
-#include "SJ/SJ_Character.h"
+ï»¿#include "SJ/SJ_Character.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
@@ -27,11 +27,9 @@ ASJ_Character::ASJ_Character()
 
 	ItemComp=CreateDefaultSubobject<USceneComponent>(TEXT("ItemComp"));
 	ItemComp->SetupAttachment(GetMesh(), TEXT("ItemPos"));
-	//ItemComp->SetRelativeLocation(FVector())
-	//ItemComp->SetRelativeRotation(FRotator())
+	ItemComp->SetRelativeLocation(FVector(-9, 6, 1));
 
-
-	// ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯ ·ÎÅ×ÀÌ¼Ç
+	// í”Œë ˆì´ì–´ ì»¨íŠ¸ë¡¤ëŸ¬ ë¡œí…Œì´ì…˜
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
@@ -48,7 +46,7 @@ void ASJ_Character::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	// IMC ¿¬°á
+	// IMC ì—°ê²°
 	APlayerController* pc = Cast<APlayerController>(GetController());
 	if (pc) {
 		UEnhancedInputLocalPlayerSubsystem* subSys = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer());
@@ -57,7 +55,7 @@ void ASJ_Character::BeginPlay()
 		}
 	}
 
-	// ÃÊ±â¼Óµµ¸¦ °È±â·Î ¼³Á¤
+	// ì´ˆê¸°ì†ë„ë¥¼ ê±·ê¸°ë¡œ ì„¤ì •
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
@@ -65,9 +63,9 @@ void ASJ_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Input °ªÀ» ÄÁÆ®·Ñ·¯ È¸Àü°ª¿¡ ¸ÂÃç ¹Ù²ãÁÖ±â
+	// Input ê°’ì„ ì»¨íŠ¸ë¡¤ëŸ¬ íšŒì „ê°’ì— ë§ì¶° ë°”ê¿”ì£¼ê¸°
 	PlayerDirection = FTransform(GetControlRotation()).TransformVector(PlayerDirection);
-	// ÇÃ·¹ÀÌ¾î ÀÌµ¿½ÃÅ°±â
+	// í”Œë ˆì´ì–´ ì´ë™ì‹œí‚¤ê¸°
 	AddMovementInput(PlayerDirection);
 	PlayerDirection = FVector::ZeroVector;
 }
@@ -76,7 +74,7 @@ void ASJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// EnhancedInputComponent·Î Ä³½ºÆÃ
+	// EnhancedInputComponentë¡œ ìºìŠ¤íŒ…
 	auto playerInput = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (playerInput) {
 		playerInput->BindAction(IA_SJ_LookUp, ETriggerEvent::Triggered, this, &ThisClass::InputLookUp);
@@ -156,13 +154,13 @@ void ASJ_Character::InputWalkToggle()
 
 void ASJ_Character::InputPrimaryAction()
 {
-	// Àåºñ ÁßÀÌ¸é ¾ÆÀÌÅÛ ÈÖµÎ¸£±â
+	// ì¥ë¹„ ì¤‘ì´ë©´ ì•„ì´í…œ íœ˜ë‘ë¥´ê¸°
 	if (bHasItem) {
 		AttackItem();
 		return;
 	}
 
-	// ¸Ç¼Õ ÀÏ ¶§ ¾ÆÀÌÅÛÀÎÁö ¹öÆ°ÀÎÁö ¸ÕÀú ÆÇº°
+	// ë§¨ì† ì¼ ë•Œ ì•„ì´í…œì¸ì§€ ë²„íŠ¼ì¸ì§€ ë¨¼ì € íŒë³„
 	FHitResult HitResult;
 	FVector StartPos = CameraComp->GetComponentLocation();
 	FVector EndPos = StartPos + CameraComp->GetForwardVector() * 300.f;
@@ -174,7 +172,7 @@ void ASJ_Character::InputPrimaryAction()
 	if (!bHit)return;
 	AActor* HitActor = HitResult.GetActor();
 
-	// ¾ÆÀÌÅÛÀÌ¶ó¸é Áİ°í ¹öÆ°ÀÌ¶ó¸é ´©¸£±â
+	// ì•„ì´í…œì´ë¼ë©´ ì¤ê³  ë²„íŠ¼ì´ë¼ë©´ ëˆ„ë¥´ê¸°
 	if (Cast<ASJ_TestItem>(HitActor)) {
 		PickupItem(HitActor);
 	}
@@ -191,15 +189,15 @@ void ASJ_Character::PickupItem(AActor* HitActor)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Item Casting Success"));
 
-	// AnimInstance -> bHasItem = true·Î º¯°æ
+	// AnimInstance -> bHasItem = trueë¡œ ë³€ê²½
 	if (USJ_PlayerAnimInstance* AnimInst = Cast<USJ_PlayerAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInst->bHasItem = true;
 	}
-	// ¾ÆÀÌÅÛ ¼ÒÀ¯ Ç¥½Ã
+	// ì•„ì´í…œ ì†Œìœ  í‘œì‹œ
 	bHasItem = true;
 	ownedItem = HitActor;
-	// ¼ÒÄÏ¿¡ ºÙÀÌ±â
+	// ì†Œì¼“ì— ë¶™ì´ê¸°
 	if (UStaticMeshComponent* ItemMesh = HitActor->FindComponentByClass<UStaticMeshComponent>())
 	{
 		ItemMesh->SetSimulatePhysics(false);
@@ -212,35 +210,29 @@ void ASJ_Character::PressButton(AActor* HitActor)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("Button Casting Success"));
 
-	// ¹öÆ° ´©¸£±â
+	// ë²„íŠ¼ ëˆ„ë¥´ê¸°
 }
 
 void ASJ_Character::AttackItem()
 {
-	// ±ÙÁ¢°ø°İ : ÀåºñÁßÀÏ ¶§ ¾ÆÀÌÅÛÀ¸·Î ÈÖµÎ¸£±â
+	// ê·¼ì ‘ê³µê²© : ì¥ë¹„ì¤‘ì¼ ë•Œ ì•„ì´í…œìœ¼ë¡œ íœ˜ë‘ë¥´ê¸°
 	if (!bHasItem || !ownedItem) return;
 	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, TEXT("Item Attack!"));
 }
 
 void ASJ_Character::ReleaseItem()
 {
-	// ÀåºñÁßÀÏ ¶§ ¾ÆÀÌÅÛ ¹ö¸®±â
+	// ì¥ë¹„ì¤‘ì¼ ë•Œ ì•„ì´í…œ ë²„ë¦¬ê¸°
 	if (!bHasItem || !ownedItem) return;
 
-	// ¶óÀÎÆ®·¹ÀÌ½º·Î mesh¿¡ ºÙÀÎ ¾ÆÀÌÅÛÀ» ¹ö¸®±â
-	// ¼ÒÀ¯off + Detach + ¹°¸®on + Äİ¸®ÀüÃ³¸®
-	if (!bHasItem || !ownedItem) return;
-
-	UPrimitiveComponent* PrimComp = Cast<UPrimitiveComponent>(ownedItem->GetRootComponent());
-	if (PrimComp)
+	// ë¼ì¸íŠ¸ë ˆì´ìŠ¤ë¡œ meshì— ë¶™ì¸ ì•„ì´í…œì„ ë²„ë¦¬ê¸°
+	// ì†Œìœ off + Detach + ë¬¼ë¦¬on + ì½œë¦¬ì „ì²˜ë¦¬
+	if ( UStaticMeshComponent* ItemMesh=ownedItem->FindComponentByClass<UStaticMeshComponent>() )
 	{
-		ownedItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		PrimComp->SetSimulatePhysics(true);
-		PrimComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		PrimComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-
-		FVector ForwardImpulse = CameraComp->GetForwardVector() * 300.f;
-		PrimComp->AddImpulse(ForwardImpulse);
+		ItemMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		ItemMesh->SetSimulatePhysics(true);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		ItemMesh->SetCollisionObjectType(ECC_PhysicsBody);
 	}
 
 	bHasItem = false;
@@ -251,10 +243,10 @@ void ASJ_Character::ReleaseItem()
 
 void ASJ_Character::Inventory()
 {
-	// E key ´©¸£¸é ¾ÆÀÌÅÛÀ» ÀÎº¥Åä¸®¿¡ º¸°üÇÏ±â
+	// E key ëˆ„ë¥´ë©´ ì•„ì´í…œì„ ì¸ë²¤í† ë¦¬ì— ë³´ê´€í•˜ê¸°
 }
 
 void ASJ_Character::InputSecondaryAction()
 {
-	// Mouse R ¾×¼Ç
+	// Mouse R ì•¡ì…˜
 }
