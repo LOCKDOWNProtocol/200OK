@@ -1,1 +1,0 @@
-#include "SJ/IInteractableInterface.h"
