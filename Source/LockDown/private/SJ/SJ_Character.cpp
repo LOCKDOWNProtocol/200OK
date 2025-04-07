@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "SJ/SJ_TestItem.h"
 #include "SJ/SJ_TestButton.h"
+#include "Components/SceneComponent.h"
+#include "SJ/SJ_PlayerAnimInstance.h"
 
 ASJ_Character::ASJ_Character()
 {
@@ -14,12 +16,20 @@ ASJ_Character::ASJ_Character()
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->SetRelativeLocation(FVector(0, 60, 80));
+	SpringArm->SetRelativeLocation(FVector(40, 0, 80));
 	SpringArm->bUsePawnControlRotation = true;
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArm);
+	CameraComp->SetRelativeLocation(FVector(30, 0, 0));
+	CameraComp->SetRelativeRotation(FRotator(-25, 0, 0));
 	CameraComp->bUsePawnControlRotation = false;
+
+	ItemComp=CreateDefaultSubobject<USceneComponent>(TEXT("ItemComp"));
+	ItemComp->SetupAttachment(GetMesh(), TEXT("ItemPos"));
+	//ItemComp->SetRelativeLocation(FVector())
+	//ItemComp->SetRelativeRotation(FRotator())
+
 
 	// 플레이어 컨트롤러 로테이션
 	bUseControllerRotationPitch = false;
@@ -164,6 +174,7 @@ void ASJ_Character::InputPrimaryAction()
 	if (!bHit)return;
 	AActor* HitActor = HitResult.GetActor();
 
+	// 아이템이라면 줍고 버튼이라면 누르기
 	if (Cast<ASJ_TestItem>(HitActor)) {
 		PickupItem(HitActor);
 	}
@@ -178,55 +189,37 @@ void ASJ_Character::InputPrimaryAction()
 
 void ASJ_Character::PickupItem(AActor* HitActor)
 {
-	FHitResult HitResult;
-	FVector StartPos = CameraComp->GetComponentLocation();
-	FVector EndPos = StartPos + CameraComp->GetForwardVector() * 300.f;
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Item Casting Success"));
 
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-
-	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red, false, 1.0f, 0, 1.0f);
-
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECC_Visibility, Params);
-	if (bHit) {
-		AActor* HitActor = HitResult.GetActor();
-		if (ASJ_TestItem* TestItem = Cast<ASJ_TestItem>(HitActor)) {
-			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Yellow, TEXT("Item Casting Success"));
-		}
-		else {
-			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Cyan, TEXT("Cannot Interaction Actor"));
-		}
+	// AnimInstance -> bHasItem = true로 변경
+	if (USJ_PlayerAnimInstance* AnimInst = Cast<USJ_PlayerAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		AnimInst->bHasItem = true;
+	}
+	// 아이템 소유 표시
+	bHasItem = true;
+	ownedItem = HitActor;
+	// 소켓에 붙이기
+	if (UStaticMeshComponent* ItemMesh = HitActor->FindComponentByClass<UStaticMeshComponent>())
+	{
+		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ItemMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("ItemPos"));
 	}
 }
 
 void ASJ_Character::PressButton(AActor* HitActor)
 {
-	FHitResult HitResult;
-	FVector StartPos = CameraComp->GetComponentLocation();
-	FVector EndPos = StartPos + CameraComp->GetForwardVector() * 300.f;
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("Button Casting Success"));
 
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-
-	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red, false, 1.0f, 0, 1.0f);
-
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECC_Visibility, Params);
-	if (bHit) {
-		AActor* HitActor = HitResult.GetActor();
-		if (ASJ_TestButton* Button = Cast<ASJ_TestButton>(HitActor)) {
-			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Red, TEXT("Button Casting Success"));
-		}
-		else {
-			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Cyan, TEXT("Cannot Interaction Actor"));
-		}
-	}
+	// 버튼 누르기
 }
 
 void ASJ_Character::AttackItem()
 {
 	// 근접공격 : 장비중일 때 아이템으로 휘두르기
 	if (!bHasItem || !ownedItem) return;
-	GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Green, TEXT("Item Attack!"));
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, TEXT("Item Attack!"));
 }
 
 void ASJ_Character::ReleaseItem()
@@ -258,10 +251,10 @@ void ASJ_Character::ReleaseItem()
 
 void ASJ_Character::Inventory()
 {
-
+	// E key 누르면 아이템을 인벤토리에 보관하기
 }
 
 void ASJ_Character::InputSecondaryAction()
 {
-
+	// Mouse R 액션
 }

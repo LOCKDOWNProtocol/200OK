@@ -58,6 +58,8 @@ private: // Input
 	class UInputAction* IA_ReleaseItem;
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	class UInputAction* IA_Inventory;
+	UPROPERTY(VisibleAnywhere)
+	class USceneComponent* ItemComp;
 
 
 private: // Input 관련 함수
