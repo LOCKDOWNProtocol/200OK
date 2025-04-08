@@ -38,50 +38,15 @@ private: // Input
 	class UInputMappingContext* IMC_SJ;
 
 
-	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* IA_PrimaryAction;
-	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* IA_SecondaryAction;
-	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* IA_ReleaseItem;
-	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* IA_Inventory;	
-	UPROPERTY(EditDefaultsOnly, Category=Input)
-	class UInputAction* IA_Tablet;
-
-
 public: // 아이템 관련 속성
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* ItemComp;
 
 
-private: // Input 관련 함수
-
-
-	void InputPrimaryAction();
-	void ReleaseItem();
-	void Inventory();
-	void TakeTablet();
-	void InputSecondaryAction();
-	
-
-public: // Mouse L - PrimaryAction 관련
-	bool bHasItem = false;
-	UPROPERTY()
-	AActor* ownedItem = nullptr;
-	float TraceLength = 200.f;
-	void PickupItem(AActor* HitActor);
-	void PressButton(AActor* HitActor);
-	void AttackItem();
-
-
-public: // Mouse R - SecondaryAction 관련
-	bool bHasTablet = false;
-
-
 public: // 컴포넌트화 시키기
 	UPROPERTY(EditAnywhere)
 	class UMoveComponent* MoveComp;
-
+	UPROPERTY(EditAnywhere)
+	class UInteractionComponent* InteractionComp;
 	
 };
