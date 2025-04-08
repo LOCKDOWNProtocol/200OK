@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -13,6 +13,8 @@ class LOCKDOWN_API ASJ_Character : public ACharacter
 
 public:
 	ASJ_Character();
+	
+	FInputBindingDelegate InputBindingDelegate;
 
 protected:
 	virtual void BeginPlay() override;
@@ -36,61 +38,17 @@ public: // Camera
 private: // Input
 	UPROPERTY(EditDefaultsOnly, Category=Input)
 	class UInputMappingContext* IMC_SJ;
-	UPROPERTY(EditDefaultsOnly, Category=Input)
-	class UInputAction* IA_SJ_LookUp;
-	UPROPERTY(EditDefaultsOnly, Category=Input)
-	class UInputAction* IA_SJ_Turn;
-	UPROPERTY(EditDefaultsOnly, Category=Input)
-	class UInputAction* IA_SJ_Move;	
-	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* IA_SJ_Run;
-	UPROPERTY(EditDefaultsOnly, Category=Input)
-	class UInputAction* IA_SJ_Jump;	
-	UPROPERTY(EditDefaultsOnly, Category=Input)
-	class UInputAction* IA_SJ_WalkHold;	
-	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* IA_SJ_WalkToggle;		
-	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* IA_PrimaryAction;
-	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* IA_SecondaryAction;
-	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* IA_ReleaseItem;
-	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* IA_Inventory;
+
+
+public: // ÏïÑÏù¥ÌÖú Í¥ÄÎ†® ÏÜçÏÑ±
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* ItemComp;
 
 
-private: // Input ∞¸∑√ «‘ºˆ
-	void InputTurn(const struct FInputActionValue& InputValue);
-	void InputLookUp(const struct FInputActionValue& InputValue);
-	void InputMove(const struct FInputActionValue& InputValue);
-	void InputRun();
-	void InputJump(const struct FInputActionValue& InputValue);
-	void InputWalkHold();
-	void InputUnWalkHold();
-	void InputWalkToggle();
-	void InputPrimaryAction();
-	void ReleaseItem();
-	void Inventory();
-	void InputSecondaryAction();
-
-
-private: // movement ∫Øºˆ
-	UPROPERTY(EditDefaultsOnly, Category=PlayerSpeed)
-	float WalkSpeed = 500.f;	
-	UPROPERTY(EditDefaultsOnly, Category=PlayerSpeed)
-	float RunSpeed = 700.f;
-	FVector PlayerDirection;
-	bool bCrouched;
+public: // Ïª¥Ìè¨ÎÑåÌä∏Ìôî ÏãúÌÇ§Í∏∞
+	UPROPERTY(EditAnywhere)
+	class UMoveComponent* MoveComp;
+	UPROPERTY(EditAnywhere)
+	class UInteractionComponent* InteractionComp;
 	
-
-public: // Mouse L - PrimaryAction ∞¸∑√
-	bool bHasItem = false;
-	UPROPERTY()
-	AActor* ownedItem = nullptr;
-	void PickupItem(AActor* HitActor);
-	void PressButton(AActor* HitActor);
-	void AttackItem();
 };
