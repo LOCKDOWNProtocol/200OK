@@ -68,6 +68,36 @@ void UInteractionComponent::InputPrimaryAction()
 	}
 }
 
+void UInteractionComponent::PickupItem(AActor* HitActor)
+{
+	if ( bHasTablet )return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Item Casting Success"));
+
+	// AnimInstance -> bHasItem = true로 변경
+	if ( USJ_PlayerAnimInstance* AnimInst=Cast<USJ_PlayerAnimInstance>(me->GetMesh()->GetAnimInstance()) )
+	{
+		AnimInst->bHasItem=true;
+	}
+	// 아이템 소유 표시
+	bHasItem=true;
+	ownedItem=HitActor;
+	// 소켓에 붙이기
+	if ( UStaticMeshComponent* ItemMesh=HitActor->FindComponentByClass<UStaticMeshComponent>() )
+	{
+		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ItemMesh->AttachToComponent(me->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("ItemPos"));
+	}
+}
+
+void UInteractionComponent::AttackItem()
+{
+	// 근접공격 : 장비중일 때 아이템으로 휘두르기
+	if ( !bHasItem || !ownedItem || bHasTablet ) return;
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, TEXT("Item Attack!"));
+}
+
 void UInteractionComponent::ReleaseItem()
 {
 	// 장비중일 때 아이템 버리기
@@ -95,49 +125,6 @@ void UInteractionComponent::ReleaseItem()
 	GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Blue, TEXT("Release Item!"));
 }
 
-void UInteractionComponent::Inventory()
-{
-	// Todo. E key 누르면 아이템을 인벤토리에 보관
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, TEXT("E key : Inventory"));
-}
-
-void UInteractionComponent::TakeTablet()
-{
-	// Todo. 태블릿 들고 이동도 가능해야함, 아이템 줍기, 공격 등은 불가능
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, TEXT("Q key : TakeTablet"));
-}
-
-void UInteractionComponent::InputSecondaryAction()
-{
-	// Todo. Mouse R 액션
-	// 일단 아이템 착용 중이 아닐땐 리턴으로만 테스트
-	if ( !bHasItem || !ownedItem ) return;
-
-	// 아이템 착용중일 경우 R->L Input 받으면 특정 위치에 두울 수 있다
-}
-
-void UInteractionComponent::PickupItem(AActor* HitActor)
-{
-	if ( bHasTablet )return;
-
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Item Casting Success"));
-
-	// AnimInstance -> bHasItem = true로 변경
-	if ( USJ_PlayerAnimInstance* AnimInst=Cast<USJ_PlayerAnimInstance>(me->GetMesh()->GetAnimInstance()) )
-	{
-		AnimInst->bHasItem=true;
-	}
-	// 아이템 소유 표시
-	bHasItem=true;
-	ownedItem=HitActor;
-	// 소켓에 붙이기
-	if ( UStaticMeshComponent* ItemMesh=HitActor->FindComponentByClass<UStaticMeshComponent>() )
-	{
-		ItemMesh->SetSimulatePhysics(false);
-		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		ItemMesh->AttachToComponent(me->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("ItemPos"));
-	}
-}
 
 void UInteractionComponent::PressButton(AActor* HitActor)
 {
@@ -154,9 +141,31 @@ void UInteractionComponent::PressButton(AActor* HitActor)
 	}
 }
 
-void UInteractionComponent::AttackItem()
+void UInteractionComponent::InputSecondaryAction()
 {
-	// 근접공격 : 장비중일 때 아이템으로 휘두르기
-	if ( !bHasItem || !ownedItem || bHasTablet ) return;
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, TEXT("Item Attack!"));
+	// Todo. Mouse R 액션
+	// 일단 아이템 착용 중이 아닐땐 리턴으로만 테스트
+	if ( !bHasItem || !ownedItem ) return;
+
+	// 놓을 수 있는 곳이 있을 경우, 특정 위치에 두울 수 있다
+	// else 아이템 던지기
+	ThrowItem();
+}
+
+void UInteractionComponent::ThrowItem()
+{
+	// 아이템에 Projectile 컴포넌트 추가해서 던지자
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, TEXT("Mouse Right"));
+}
+
+void UInteractionComponent::Inventory()
+{
+	// Todo. E key 누르면 아이템을 인벤토리에 보관
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, TEXT("E key : Inventory"));
+}
+
+void UInteractionComponent::TakeTablet()
+{
+	// Todo. 태블릿 들고 이동도 가능해야함, 아이템 줍기, 공격 등은 불가능
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, TEXT("Q key : TakeTablet"));
 }
