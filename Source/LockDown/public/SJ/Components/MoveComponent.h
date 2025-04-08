@@ -2,11 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "BaseComponent.h"
 #include "MoveComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class LOCKDOWN_API UMoveComponent : public UActorComponent
+class LOCKDOWN_API UMoveComponent : public UBaseComponent
 {
 	GENERATED_BODY()
 
@@ -20,12 +21,11 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 
-public: // 컴포넌트 소유 액터
-	UPROPERTY()
-	class ASJ_Character* me;
+public:
 	UPROPERTY()
 	class UCharacterMovementComponent* MoveComp;
 
+public:
 	UPROPERTY(EditDefaultsOnly, Category=Input)
 	class UInputAction* IA_SJ_LookUp;
 	UPROPERTY(EditDefaultsOnly, Category=Input)
@@ -43,6 +43,8 @@ public: // 컴포넌트 소유 액터
 
 
 
+
+	void SetupInputBinding(class UEnhancedInputComponent* Input) override;
 	void InputTurn(const struct FInputActionValue& InputValue);
 	void InputLookUp(const struct FInputActionValue& InputValue);
 	void InputMove(const struct FInputActionValue& InputValue);
@@ -51,9 +53,6 @@ public: // 컴포넌트 소유 액터
 	void InputWalkHold();
 	void InputUnWalkHold();
 	void InputWalkToggle();
-
-
-	void SetupInputBinding(class UEnhancedInputComponent* Input);
 
 
 public: // 이동 변수

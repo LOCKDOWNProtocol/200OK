@@ -2,11 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "BaseComponent.h"
 #include "InteractionComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class LOCKDOWN_API UInteractionComponent : public UActorComponent
+class LOCKDOWN_API UInteractionComponent : public UBaseComponent
 {
 	GENERATED_BODY()
 
@@ -19,9 +20,7 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-public: // 컴포넌트 소유 액터
-	UPROPERTY()
-	class ASJ_Character* me;
+public: 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	class UInputAction* IA_PrimaryAction;
 	UPROPERTY(EditDefaultsOnly, Category = Input)
@@ -33,7 +32,7 @@ public: // 컴포넌트 소유 액터
 	UPROPERTY(EditDefaultsOnly, Category=Input)
 	class UInputAction* IA_Tablet;
 
-	void SetupInputBinding(class UEnhancedInputComponent* Input);
+	virtual void SetupInputBinding(class UEnhancedInputComponent* Input) override;
 	void InputPrimaryAction();
 	void ReleaseItem();
 	void Inventory();

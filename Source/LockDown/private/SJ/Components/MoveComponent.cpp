@@ -16,7 +16,6 @@ void UMoveComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	me=Cast<ASJ_Character>(GetOwner());
 	MoveComp=me->GetCharacterMovement();
 	MoveComp->MaxWalkSpeed=WalkSpeed;
 }
@@ -34,6 +33,8 @@ void UMoveComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 void UMoveComponent::SetupInputBinding(class UEnhancedInputComponent* Input)
 {
+	Super::SetupInputBinding(Input);
+
 	Input->BindAction(IA_SJ_LookUp, ETriggerEvent::Triggered, this, &ThisClass::InputLookUp);
 	Input->BindAction(IA_SJ_Turn, ETriggerEvent::Triggered, this, &ThisClass::InputTurn);
 	Input->BindAction(IA_SJ_Move, ETriggerEvent::Triggered, this, &ThisClass::InputMove);

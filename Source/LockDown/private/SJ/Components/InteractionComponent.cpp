@@ -16,8 +16,6 @@ UInteractionComponent::UInteractionComponent()
 void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	me=Cast<ASJ_Character>(GetOwner());
 }
 
 void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -28,13 +26,12 @@ void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 void UInteractionComponent::SetupInputBinding(class UEnhancedInputComponent* Input)
 {
+	Super::SetupInputBinding(Input);
+
 	Input->BindAction(IA_PrimaryAction, ETriggerEvent::Started, this, &ThisClass::InputPrimaryAction);
 	Input->BindAction(IA_SecondaryAction, ETriggerEvent::Started, this, &ThisClass::InputSecondaryAction);
-
 	Input->BindAction(IA_ReleaseItem, ETriggerEvent::Started, this, &ThisClass::ReleaseItem);
-
 	Input->BindAction(IA_Inventory, ETriggerEvent::Started, this, &ThisClass::Inventory);
-
 	Input->BindAction(IA_Tablet, ETriggerEvent::Started, this, &ThisClass::TakeTablet);
 
 }

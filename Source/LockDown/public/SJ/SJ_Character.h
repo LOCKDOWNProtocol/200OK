@@ -13,6 +13,8 @@ class LOCKDOWN_API ASJ_Character : public ACharacter
 
 public:
 	ASJ_Character();
+	
+	FInputBindingDelegate InputBindingDelegate;
 
 protected:
 	virtual void BeginPlay() override;

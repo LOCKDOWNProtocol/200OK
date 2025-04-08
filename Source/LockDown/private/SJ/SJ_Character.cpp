@@ -45,7 +45,7 @@ ASJ_Character::ASJ_Character()
 	}
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
-	// 컴포넌트화
+	// 컴포넌트들
 	MoveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("MoveComp"));
 	InteractionComp=CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComp"));
 
@@ -78,9 +78,8 @@ void ASJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	// EnhancedInputComponent로 캐스팅
 	auto playerInput=Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (playerInput) {
-
-		// 컴포넌트화	
-		MoveComp->SetupInputBinding(playerInput);
-		InteractionComp->SetupInputBinding(playerInput);
+		if ( InputBindingDelegate.IsBound() ) {
+			InputBindingDelegate.Broadcast(playerInput);
+		}
 	}
 }
