@@ -7,11 +7,8 @@
 #include "MW/Items.h"
 #include "SJ/SJ_TestButton.h"
 #include "SJ/SJ_PlayerAnimInstance.h"
-<<<<<<< HEAD
 #include "MW/Tablet.h"
-=======
 #include "MW/Knife.h"
->>>>>>> main
 
 UInteractionComponent::UInteractionComponent()
 {
