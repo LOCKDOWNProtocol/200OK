@@ -88,6 +88,8 @@ void UInteractionComponent::PickupItem(AActor* HitActor)
 		ItemMesh->SetSimulatePhysics(false);
 		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		ItemMesh->AttachToComponent(me->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("ItemPos"));
+		ItemMesh->SetRelativeLocation(FVector(-11.f, 3.f, 0.f));
+		ItemMesh->SetRelativeRotation(FRotator(0.f, -180.f, -180.f));
 	}
 }
 

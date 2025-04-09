@@ -30,7 +30,6 @@ ASJ_Character::ASJ_Character()
 
 	ItemComp=CreateDefaultSubobject<USceneComponent>(TEXT("ItemComp"));
 	ItemComp->SetupAttachment(GetMesh(), TEXT("ItemPos"));
-	ItemComp->SetRelativeLocation(FVector(-110, 3, 5));
 
 	// 플레이어 컨트롤러 로테이션
 	bUseControllerRotationPitch = false;
