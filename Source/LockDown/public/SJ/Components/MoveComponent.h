@@ -5,7 +5,6 @@
 #include "BaseComponent.h"
 #include "MoveComponent.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LOCKDOWN_API UMoveComponent : public UBaseComponent
 {
@@ -62,5 +61,12 @@ public: // 이동 변수
 	float RunSpeed = 700.f;
 	FVector PlayerDirection;
 	bool bCrouched;
+
+
+public: // 카메라
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	float MinPitch = -30.f;
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	float MaxPitch = 70.f;
 
 };

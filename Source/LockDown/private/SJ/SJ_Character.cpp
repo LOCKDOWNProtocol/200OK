@@ -66,7 +66,6 @@ void ASJ_Character::BeginPlay()
 void ASJ_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ASJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
