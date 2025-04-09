@@ -38,4 +38,20 @@ public:
 
 	void SwitchTablet(bool value);
 
+	void LerpPosRot();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Tablet")
+	FVector OnTabletPos = FVector(44.0f, -20.f, 46.5f);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Tablet")
+	FRotator OnTabletRot = FRotator(25.f, 180.f, 0.f);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Tablet")
+	FVector OffTabletPos;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Tablet")
+	FRotator OffTabletRot;
+
+	float elapedTime = 0.f;
+
 };

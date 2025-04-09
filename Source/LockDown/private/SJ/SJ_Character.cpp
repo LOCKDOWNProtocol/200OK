@@ -12,6 +12,9 @@
 #include "SJ/SJ_PlayerAnimInstance.h"
 #include "SJ/Components/MoveComponent.h"
 #include "SJ/Components/InteractionComponent.h"
+#include "Components/ChildActorComponent.h"
+#include "MW/Tablet.h"
+#include "shDebug.h"
 
 ASJ_Character::ASJ_Character()
 {
@@ -46,6 +49,14 @@ ASJ_Character::ASJ_Character()
 	// 컴포넌트들
 	MoveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("MoveComp"));
 	InteractionComp=CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComp"));
+	
+
+	TabletComp = CreateDefaultSubobject<UChildActorComponent> (TEXT("Tablet"));
+	TabletComp->SetupAttachment (RootComponent);
+
+	TabletComp->SetChildActorClass (TabletFactory);
+
+
 
 }
 
@@ -61,6 +72,7 @@ void ASJ_Character::BeginPlay()
 			subSys->AddMappingContext(IMC_SJ, 0);
 		}
 	}
+	
 }
 
 void ASJ_Character::Tick(float DeltaTime)
@@ -81,3 +93,4 @@ void ASJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		}
 	}
 }
+

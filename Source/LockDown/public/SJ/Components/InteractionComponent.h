@@ -53,4 +53,17 @@ public: // Mouse L - PrimaryAction 관련
 public: // Mouse R - SecondaryAction 관련
 	bool bHasTablet = false;
 	void ThrowItem();
+
+#pragma region Tablet_MW
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class ATablet* TabletActor;
+
+	void FindTablet();
+	
+	
+
+#pragma endregion Tablet_MW
+
+	
 };

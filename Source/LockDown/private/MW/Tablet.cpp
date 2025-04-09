@@ -40,9 +40,6 @@ ATablet::ATablet()
 		WidgetComp->SetWidgetClass (TmpWidget.Class);
 	}
 
-
-
-
 }
 
 // Called when the game starts or when spawned
@@ -69,14 +66,22 @@ void ATablet::SwitchTablet(bool value)
 	if(!pc ) return;
 
 	isTabletOpen = value;
+	pc->SetShowMouseCursor(isTabletOpen);
+
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager ().SetTimer(TimerHandle, this, &ATablet::LerpPosRot, 0.1f, true);
+
 	
+	//TabletActor->SwitchTablet(bHasTablet, OnTabletPos, OffTabletPos, OnTabletRot, OffTabletRot);
+}
+
+void ATablet::LerpPosRot()
+{
 	if ( isTabletOpen )
 	{
-		pc->SetShowMouseCursor (isTabletOpen);
-	}
-	else
-	{
-		pc->SetShowMouseCursor (isTabletOpen);
+		elapedTime += 0.1;
+
+		//float alpha = FMath::Clamp( elapedTime / )
 	}
 }
 

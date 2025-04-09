@@ -7,6 +7,7 @@
 #include "MW/Items.h"
 #include "SJ/SJ_TestButton.h"
 #include "SJ/SJ_PlayerAnimInstance.h"
+#include "MW/Tablet.h"
 
 UInteractionComponent::UInteractionComponent()
 {
@@ -16,6 +17,7 @@ UInteractionComponent::UInteractionComponent()
 void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	FindTablet();
 }
 
 void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -160,6 +162,7 @@ void UInteractionComponent::ThrowItem()
 	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, TEXT("Mouse Right"));
 }
 
+
 void UInteractionComponent::Inventory()
 {
 	// Todo. E key 누르면 아이템을 인벤토리에 보관
@@ -170,4 +173,29 @@ void UInteractionComponent::TakeTablet()
 {
 	// Todo. 태블릿 들고 이동도 가능해야함, 아이템 줍기, 공격 등은 불가능
 	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, TEXT("Q key : TakeTablet"));
+	
+	if ( TabletActor )
+	{
+		bHasTablet = !bHasTablet;
+		me->isTakingTablet = bHasTablet;
+
+		if(bHasTablet)
+			TabletActor->SwitchTablet(bHasTablet);
+		else
+			TabletActor->SwitchTablet(bHasTablet);
+	}
+}
+
+void UInteractionComponent::FindTablet()
+{
+	TArray <AActor*> ChildArray;
+	me->GetAllChildActors(ChildArray);
+
+	for ( auto& c : ChildArray )
+	{
+		if ( c->GetActorNameOrLabel().Contains("BP_Tablet") )
+		{
+			TabletActor = Cast<ATablet>(c);
+		}
+	}
 }

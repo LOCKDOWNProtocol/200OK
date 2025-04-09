@@ -49,12 +49,16 @@ void UMoveComponent::SetupInputBinding(class UEnhancedInputComponent* Input)
 
 void UMoveComponent::InputTurn(const FInputActionValue& InputValue)
 {
+	if(me->isTakingTablet ) return;
+
 	float value=InputValue.Get<float>();
 	me->AddControllerYawInput(value);
 }
 
 void UMoveComponent::InputLookUp(const FInputActionValue& InputValue)
 {
+	if ( me->isTakingTablet ) return;
+
 	float value=InputValue.Get<float>();
 	me->AddControllerPitchInput(value);
 }

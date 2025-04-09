@@ -50,5 +50,17 @@ public: // 컴포넌트화 시키기
 	class UMoveComponent* MoveComp;
 	UPROPERTY(EditAnywhere)
 	class UInteractionComponent* InteractionComp;
+
+	bool isTakingTablet = false;
 	
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	class UChildActorComponent* TabletComp;
+
+	//UPROPERTY()
+	//class ATablet* TabletActor;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<class ATablet> TabletFactory;
+
+
 };
