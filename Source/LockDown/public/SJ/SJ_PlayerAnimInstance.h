@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "SJ_TestItem.h"
 #include "SJ_PlayerAnimInstance.generated.h"
 
 UCLASS()
@@ -17,6 +18,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bHasItem = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bHasKnife = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Direction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Speed;
@@ -29,6 +32,5 @@ public:
 
 	// 공격 애니메이션 재생 함수
 	void PlayPressButtonAnim();
-
 
 };
