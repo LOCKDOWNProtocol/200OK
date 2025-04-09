@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -8,7 +8,7 @@ UCLASS()
 class LOCKDOWN_API ASJ_TestItem : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:	
 	ASJ_TestItem();
 

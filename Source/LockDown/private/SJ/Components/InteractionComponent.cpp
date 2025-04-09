@@ -7,7 +7,11 @@
 #include "MW/Items.h"
 #include "SJ/SJ_TestButton.h"
 #include "SJ/SJ_PlayerAnimInstance.h"
+<<<<<<< HEAD
 #include "MW/Tablet.h"
+=======
+#include "MW/Knife.h"
+>>>>>>> main
 
 UInteractionComponent::UInteractionComponent()
 {
@@ -32,7 +36,7 @@ void UInteractionComponent::SetupInputBinding(class UEnhancedInputComponent* Inp
 
 	Input->BindAction(IA_PrimaryAction, ETriggerEvent::Started, this, &ThisClass::InputPrimaryAction);
 	Input->BindAction(IA_SecondaryAction, ETriggerEvent::Started, this, &ThisClass::InputSecondaryAction);
-	Input->BindAction(IA_ReleaseItem, ETriggerEvent::Started, this, &ThisClass::ReleaseItem);
+	Input->BindAction(IA_ReleaseItem, ETriggerEvent::Started, this, &ThisClass::InputFKey);
 	Input->BindAction(IA_Inventory, ETriggerEvent::Started, this, &ThisClass::Inventory);
 	Input->BindAction(IA_Tablet, ETriggerEvent::Started, this, &ThisClass::TakeTablet);
 
@@ -40,9 +44,15 @@ void UInteractionComponent::SetupInputBinding(class UEnhancedInputComponent* Inp
 
 void UInteractionComponent::InputPrimaryAction()
 {
-	// 장비 중이면 아이템 휘두르기
+	// 아이템 장비 중이면 아이템 휘두르기 공격
 	if ( bHasItem ) {
 		AttackItem();
+		return;
+	}
+
+	// 칼 장비 중이면 칼 찌르기 공격
+	if ( bHasKnife ) {
+		StabKnife();
 		return;
 	}
 
@@ -58,8 +68,14 @@ void UInteractionComponent::InputPrimaryAction()
 	if ( !bHit )return;
 	AActor* HitActor=HitResult.GetActor();
 
-	// 아이템이라면 줍고 버튼이라면 누르기
+	// 아이템이라면 줍고 버튼이라면 누르기 
 	if ( Cast<AItems>(HitActor) ) {
+		// knife일 경우에는 다른 애니메이션 출력하고 싶다
+		if ( AKnife* Knife=Cast<AKnife>(HitActor) )
+		{
+			HoldAKnife(HitActor);
+			return;
+		}
 		PickupItem(HitActor);
 	}
 	else if ( Cast<ASJ_TestButton>(HitActor) ) {
@@ -72,7 +88,7 @@ void UInteractionComponent::InputPrimaryAction()
 
 void UInteractionComponent::PickupItem(AActor* HitActor)
 {
-	if ( bHasTablet )return;
+	if ( bHasTablet || bHasKnife) return;
 
 	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Item Casting Success"));
 
@@ -95,11 +111,43 @@ void UInteractionComponent::PickupItem(AActor* HitActor)
 	}
 }
 
+void UInteractionComponent::HoldAKnife(AActor* HitActor)
+{
+	if ( bHasTablet || bHasItem) return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("Knife Casting Success"));
+
+	// AnimInstance -> bHasItem = true로 변경
+	if ( USJ_PlayerAnimInstance* AnimInst=Cast<USJ_PlayerAnimInstance>(me->GetMesh()->GetAnimInstance()) )
+	{
+		AnimInst->bHasKnife=true;
+	}
+	// 아이템 소유 표시
+	bHasKnife=true;
+	ownedItem=HitActor;
+	// 소켓에 붙이기
+	if ( UStaticMeshComponent* ItemMesh=HitActor->FindComponentByClass<UStaticMeshComponent>() )
+	{
+		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ItemMesh->AttachToComponent(me->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("ItemPos"));
+		ItemMesh->SetRelativeLocation(FVector(-11.f, 3.f, 0.f));
+		ItemMesh->SetRelativeRotation(FRotator(0.f, -180.f, -180.f));
+	}
+}
+
 void UInteractionComponent::AttackItem()
 {
 	// 근접공격 : 장비중일 때 아이템으로 휘두르기
 	if ( !bHasItem || !ownedItem || bHasTablet ) return;
 	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, TEXT("Item Attack!"));
+}
+
+void UInteractionComponent::StabKnife()
+{
+	// 근접공격 : 장비중일 때 칼로 찌르기
+	if ( !bHasKnife || !ownedItem || bHasTablet ) return;
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("Knife Stab!"));
 }
 
 void UInteractionComponent::ReleaseItem()
@@ -129,6 +177,43 @@ void UInteractionComponent::ReleaseItem()
 	GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Blue, TEXT("Release Item!"));
 }
 
+void UInteractionComponent::ReleaseKnife()
+{
+	// 장비중일 때 아이템 버리기
+	if ( !bHasKnife || !ownedItem || bHasTablet ) return;
+
+	// 라인트레이스로 mesh에 붙인 아이템을 버리기
+	// 소유off + Detach + 물리on + 콜리전처리
+	if ( UStaticMeshComponent* ItemMesh=ownedItem->FindComponentByClass<UStaticMeshComponent>() )
+	{
+		ItemMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		ItemMesh->SetSimulatePhysics(true);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		ItemMesh->SetCollisionObjectType(ECC_PhysicsBody);
+	}
+
+	// AnimInstance -> bHasItem = false로 변경
+	if ( USJ_PlayerAnimInstance* AnimInst=Cast<USJ_PlayerAnimInstance>(me->GetMesh()->GetAnimInstance()) )
+	{
+		AnimInst->bHasKnife=false;
+	}
+
+	bHasKnife=false;
+	ownedItem=nullptr;
+
+	GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Blue, TEXT("Release Item!"));
+}
+
+void UInteractionComponent::InputFKey()
+{
+	if ( bHasItem ) {
+		ReleaseItem();
+	}
+	else {
+		ReleaseKnife();
+	}
+}
+
 
 void UInteractionComponent::PressButton(AActor* HitActor)
 {
@@ -149,7 +234,7 @@ void UInteractionComponent::InputSecondaryAction()
 {
 	// Todo. Mouse R 액션
 	// 일단 아이템 착용 중이 아닐땐 리턴으로만 테스트
-	if ( !bHasItem || !ownedItem ) return;
+	if ( !bHasItem || !ownedItem || !bHasKnife) return;
 
 	// 놓을 수 있는 곳이 있을 경우, 특정 위치에 두울 수 있다
 	// else 아이템 던지기

@@ -34,7 +34,7 @@ public:
 
 	virtual void SetupInputBinding(class UEnhancedInputComponent* Input) override;
 	void InputPrimaryAction();
-	void ReleaseItem();
+	void InputFKey();
 	void Inventory();
 	void TakeTablet();
 	void InputSecondaryAction();
@@ -42,12 +42,19 @@ public:
 
 public: // Mouse L - PrimaryAction 관련
 	bool bHasItem = false;
+	bool bHasKnife=false;
 	UPROPERTY()
 	AActor* ownedItem = nullptr;
 	float TraceLength = 200.f;
 	void PickupItem(AActor* HitActor);
+	void HoldAKnife(AActor* HitActor);
 	void PressButton(AActor* HitActor);
 	void AttackItem();
+	void StabKnife();
+
+public: // F Key 관련
+	void ReleaseItem();
+	void ReleaseKnife();
 
 
 public: // Mouse R - SecondaryAction 관련

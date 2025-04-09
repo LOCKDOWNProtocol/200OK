@@ -29,6 +29,12 @@ void UMoveComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	// 플레이어 이동시키기
 	me -> AddMovementInput(PlayerDirection);
 	PlayerDirection=FVector::ZeroVector;
+
+	// 카메라 각도 클램프
+	FRotator ControlRot=me->GetControlRotation();
+	ControlRot.Pitch=FMath::ClampAngle(ControlRot.Pitch, MinPitch, MaxPitch);
+	me->GetController()->SetControlRotation(ControlRot);
+	GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, FString::Printf(TEXT("Current Clamp : Pitch = %.2f"), ControlRot.Pitch));
 }
 
 void UMoveComponent::SetupInputBinding(class UEnhancedInputComponent* Input)
