@@ -47,10 +47,13 @@ public:
 	FRotator OnTabletRot = FRotator(25.f, 180.f, 0.f);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Tablet")
-	FVector OffTabletPos;
+	FVector OffTabletPos = FVector(37.9f, -20.f, 17.f);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Tablet")
-	FRotator OffTabletRot;
+	FRotator OffTabletRot = FRotator(180.f, -50.f, 25.f);
+
+
+	FTimerHandle TimerHandle;
 
 	float elapedTime = 0.f;
 

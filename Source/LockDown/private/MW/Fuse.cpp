@@ -51,13 +51,12 @@ AFuse::AFuse()
 		ColorMap.Add(PartColor::Blue, TmpBlueMat.Object);
 	}
 
-	BoxComp->SetBoxExtent (FVector( 23.f, 22.f, 40.f));
-	BoxComp->SetRelativeScale3D (FVector(0.3f));
-	FirstMesh->SetRelativeScale3D (FVector(5.f, 10.f, 10.f));
-	FirstMesh->SetRelativeLocation (FVector(( -9.f, 0.f, -4.3f )));
-	SecondMesh->SetRelativeScale3D(FVector(5.f, 10.f, 10.f));
-	SecondMesh->SetRelativeLocation (FVector(10.f, 0.f, -4.3f ));
-
+	BoxComp->SetBoxExtent (FVector( 23.f, 35.f, 45.f));
+	BoxComp->SetRelativeScale3D (FVector(0.25f));
+	FirstMesh->SetRelativeScale3D (FVector(0.02f));
+	FirstMesh->SetRelativeLocationAndRotation (FVector( 16.3f, 12.5f, -1.73f ), FRotator(0.f, 270.f, 90.f));
+	SecondMesh->SetRelativeScale3D(FVector(0.02f));
+	SecondMesh->SetRelativeLocationAndRotation (FVector(16.3f, -15.13f, -1.7f ), FRotator(0.f, 270.f, 90.f));
 
 }
 // Called when the game starts or when spawned

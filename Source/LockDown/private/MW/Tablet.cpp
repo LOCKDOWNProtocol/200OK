@@ -46,6 +46,12 @@ ATablet::ATablet()
 void ATablet::BeginPlay()
 {
 	Super::BeginPlay();
+
+	player = Cast<ASJ_Character>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	if ( !player ) return;
+	player->TabletComp->SetVisibility(isTabletOpen);
+
+	//OnTabletPos = player->CameraComp->GetForwardVector ()
 	
 }
 
@@ -59,7 +65,6 @@ void ATablet::Tick(float DeltaTime)
 
 void ATablet::SwitchTablet(bool value)
 {
-	player = Cast<ASJ_Character>(UGameplayStatics::GetPlayerPawn (GetWorld (),0));
 	if (!player ) return;
 
 	APlayerController* pc = Cast<APlayerController>(player->GetController ());
@@ -68,8 +73,10 @@ void ATablet::SwitchTablet(bool value)
 	isTabletOpen = value;
 	pc->SetShowMouseCursor(isTabletOpen);
 
-	FTimerHandle TimerHandle;
-	GetWorldTimerManager ().SetTimer(TimerHandle, this, &ATablet::LerpPosRot, 0.1f, true);
+	GetWorldTimerManager ().SetTimer(TimerHandle, this, &ATablet::LerpPosRot, 0.05f, true);
+
+	if( isTabletOpen )
+		player->TabletComp->SetVisibility(isTabletOpen);
 
 	
 	//TabletActor->SwitchTablet(bHasTablet, OnTabletPos, OffTabletPos, OnTabletRot, OffTabletRot);
@@ -77,11 +84,41 @@ void ATablet::SwitchTablet(bool value)
 
 void ATablet::LerpPosRot()
 {
+	elapedTime+=0.05;
+
+	float alpha = FMath::Clamp(elapedTime / 0.5f, 0.f, 1.f);
+
+	float c1 = 1.70158f;
+	float c3 = c1 + 1.f;
+
+	//alpha = 1 + c3 * FMath::Pow(alpha - 1, 3) + c1 * FMath::Pow(alpha - 1, 2);
+	alpha = 1 - FMath::Pow(1 - alpha, 5);
+	
+
 	if ( isTabletOpen )
 	{
-		elapedTime += 0.1;
+		
+		FVector newPos = FMath::Lerp (OffTabletPos, OnTabletPos, alpha);
+		FRotator newRot = FMath::Lerp (OffTabletRot, OnTabletRot, alpha);
 
-		//float alpha = FMath::Clamp( elapedTime / )
+		player->TabletComp->SetRelativeLocationAndRotation (newPos, newRot);
+		
+
 	}
+	else
+	{
+		FVector newPos=FMath::Lerp(OnTabletPos, OffTabletPos, alpha);
+		FRotator newRot=FMath::Lerp(OnTabletRot, OffTabletRot, alpha);
+
+		player->TabletComp->SetRelativeLocationAndRotation(newPos, newRot);
+	}
+	if ( alpha >= 1.f )
+	{
+		GetWorldTimerManager().ClearTimer(TimerHandle);
+		elapedTime=0.f;
+		if( !isTabletOpen )
+			player->TabletComp->SetVisibility(isTabletOpen);
+	}
+
 }
 
