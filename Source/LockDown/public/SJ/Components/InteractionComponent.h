@@ -20,6 +20,11 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+
+public: // 틱에서 라인트레이스 쏴서 상호작용 아이템인지 검사
+	void CheckTrace();
+	
+
 public: 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	class UInputAction* IA_PrimaryAction;

@@ -26,6 +26,34 @@ void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	CheckTrace();
+}
+
+void UInteractionComponent::CheckTrace()
+{
+	if ( !me || !me->CameraComp ) return;
+
+	FHitResult HitResult;
+	FVector StartPos=me->CameraComp->GetComponentLocation();
+	FVector EndPos=StartPos + me->CameraComp->GetForwardVector() * TraceLength;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(me);
+	bool bHit=GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECC_Visibility, Params);
+
+	if ( !bHit || !HitResult.GetActor() ) return;
+	AActor* HitActor=HitResult.GetActor();
+
+	if ( Cast<AItems>(HitActor) )
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, TEXT("💡 아이템 앞에 있음"));
+	}
+	else if ( Cast<ASJ_TestButton>(HitActor) )
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue, TEXT("💡 버튼 감지됨"));
+	}
+	else {
+		GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue, TEXT("💡 트레이스 발사중"));
+	}
 }
 
 void UInteractionComponent::SetupInputBinding(class UEnhancedInputComponent* Input)
@@ -47,7 +75,6 @@ void UInteractionComponent::InputPrimaryAction()
 		AttackItem();
 		return;
 	}
-
 	// 칼 장비 중이면 칼 찌르기 공격
 	if ( bHasKnife ) {
 		StabKnife();

@@ -50,14 +50,10 @@ ASJ_Character::ASJ_Character()
 	MoveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("MoveComp"));
 	InteractionComp=CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComp"));
 	
-
+	// Tablet 컴포넌트
 	TabletComp = CreateDefaultSubobject<UChildActorComponent> (TEXT("Tablet"));
 	TabletComp->SetupAttachment (RootComponent);
-
 	TabletComp->SetChildActorClass (TabletFactory);
-
-
-
 }
 
 void ASJ_Character::BeginPlay()
