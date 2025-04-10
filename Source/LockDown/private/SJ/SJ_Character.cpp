@@ -52,7 +52,7 @@ ASJ_Character::ASJ_Character()
 	
 
 	TabletComp = CreateDefaultSubobject<UChildActorComponent> (TEXT("Tablet"));
-	TabletComp->SetupAttachment (RootComponent);
+	TabletComp->SetupAttachment (SpringArm);
 
 	TabletComp->SetChildActorClass (TabletFactory);
 

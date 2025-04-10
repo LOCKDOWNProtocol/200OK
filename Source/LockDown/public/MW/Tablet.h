@@ -41,13 +41,13 @@ public:
 	void LerpPosRot();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Tablet")
-	FVector OnTabletPos = FVector(44.0f, -20.f, 46.5f);
+	FVector OnTabletPos = FVector(53.3f, -22.86f, -27.58f);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Tablet")
 	FRotator OnTabletRot = FRotator(25.f, 180.f, 0.f);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Tablet")
-	FVector OffTabletPos = FVector(37.9f, -20.f, 17.f);
+	FVector OffTabletPos = FVector(50.f, -29.f, -47.f);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Tablet")
 	FRotator OffTabletRot = FRotator(180.f, -50.f, 25.f);
