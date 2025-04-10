@@ -20,6 +20,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bHasKnife = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bHasTwoHand= false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Direction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Speed;

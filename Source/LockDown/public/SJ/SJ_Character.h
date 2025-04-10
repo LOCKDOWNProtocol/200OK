@@ -51,14 +51,11 @@ public: // 컴포넌트화 시키기
 	UPROPERTY(EditAnywhere)
 	class UInteractionComponent* InteractionComp;
 
+
+public: // Tablet 관련
 	bool isTakingTablet = false;
-	
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	class UChildActorComponent* TabletComp;
-
-	//UPROPERTY()
-	//class ATablet* TabletActor;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<class ATablet> TabletFactory;
 
