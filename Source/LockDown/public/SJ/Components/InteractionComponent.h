@@ -43,18 +43,27 @@ public:
 public: // Mouse L - PrimaryAction 관련
 	bool bHasItem = false;
 	bool bHasKnife=false;
+	bool bHasTwoHand=false;
 	UPROPERTY()
 	AActor* ownedItem = nullptr;
 	float TraceLength = 200.f;
+	// 한손아이템잡기 or 칼잡기 or 양손아이템잡기
 	void PickupItem(AActor* HitActor);
 	void HoldAKnife(AActor* HitActor);
+	void HoldTwoHand(AActor* HitActor);
+
+	// 버튼누르기
 	void PressButton(AActor* HitActor);
+	
+	// 각 무기별 공격함수
 	void AttackItem();
 	void StabKnife();
+	
 
 public: // F Key 관련
 	void ReleaseItem();
 	void ReleaseKnife();
+	void ReleaseTwoHand();
 
 
 public: // Mouse R - SecondaryAction 관련
