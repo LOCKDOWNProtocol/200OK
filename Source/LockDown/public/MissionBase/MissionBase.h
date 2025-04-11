@@ -19,12 +19,17 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	
-public:
-	virtual void StartMission();
-	virtual int32 ClearMission();
+protected:
+	virtual void StartMission() {};
+	virtual int32 ClearMission() { return 0; };
+	void EndMission();
 
+	FORCEINLINE void SetTotalCount(int32 t) { totalCount = t; }
+	FORCEINLINE void SetClearCount(int32 c) { clearCount = c; }
 
-public:
-	bool bIsClear=false;
+private:
+	bool bIsClear = false;
+	int32 totalCount;
+	int32 clearCount = 0;
 
 };

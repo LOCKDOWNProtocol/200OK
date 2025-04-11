@@ -18,12 +18,9 @@ void AMissionBase::Tick(float DeltaTime)
 
 }
 
-void AMissionBase::StartMission()
+void AMissionBase::EndMission()
 {
-}
-
-int32 AMissionBase::ClearMission()
-{
-	return 0;
+	if(totalCount == clearCount )
+		bIsClear = true;
 }
 

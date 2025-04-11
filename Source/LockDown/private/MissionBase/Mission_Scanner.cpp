@@ -19,3 +19,12 @@ void AMission_Scanner::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+void AMission_Scanner::StartMission()
+{
+}
+
+int32 AMission_Scanner::ClearMission()
+{
+	return int32();
+}
