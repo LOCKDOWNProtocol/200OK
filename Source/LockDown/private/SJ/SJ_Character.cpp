@@ -74,6 +74,9 @@ void ASJ_Character::BeginPlay()
 void ASJ_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	DrawLine (GetWorld (), CameraComp->GetComponentLocation (), CameraComp->GetComponentLocation () + CameraComp->GetForwardVector () * 300, 3.f, FColor::Blue);
+
 }
 
 void ASJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
