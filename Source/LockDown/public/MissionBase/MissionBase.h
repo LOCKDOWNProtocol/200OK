@@ -18,4 +18,13 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	
+public:
+	virtual void StartMission();
+	virtual int32 ClearMission();
+
+
+public:
+	bool bIsClear=false;
+
 };

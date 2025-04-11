@@ -1,20 +1,25 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "MW/GasCylider.h"
+﻿#include "MW/GasCylider.h"
 
 AGasCylider::AGasCylider()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
 }
-// Called when the game starts or when spawned
+
 void AGasCylider::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
-// Called every frame
+
 void AGasCylider::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+}
+
+void AGasCylider::Explode()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Black, TEXT("해당 가스통 터짐!"));
+	// Todo. 파티클, 사운드, 콜리전 처리
 }

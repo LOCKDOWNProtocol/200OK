@@ -18,3 +18,12 @@ void AMissionBase::Tick(float DeltaTime)
 
 }
 
+void AMissionBase::StartMission()
+{
+}
+
+int32 AMissionBase::ClearMission()
+{
+	return 0;
+}
+

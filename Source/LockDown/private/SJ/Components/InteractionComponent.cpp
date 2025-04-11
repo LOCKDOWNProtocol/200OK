@@ -45,14 +45,11 @@ void UInteractionComponent::CheckTrace()
 
 	if ( Cast<AItems>(HitActor) )
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, TEXT("💡 아이템 앞에 있음"));
+		GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Magenta, TEXT("아이템이 앞에 있음!!"));
 	}
 	else if ( Cast<ASJ_TestButton>(HitActor) )
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue, TEXT("💡 버튼 감지됨"));
-	}
-	else {
-		GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Blue, TEXT("💡 트레이스 발사중"));
+		GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Magenta, TEXT("버튼이 앞에 있음!!"));
 	}
 }
 
@@ -301,6 +298,8 @@ void UInteractionComponent::InputFKey()
 
 void UInteractionComponent::PressButton(AActor* HitActor)
 {
+	if ( bHasTablet || bHasItem || bHasKnife || bHasTwoHand) return;
+
 	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("Button Casting Success"));
 
 	// 테스트용 거리 : 버튼과의 거리가 1m 이상일 경우 누르지 못함
